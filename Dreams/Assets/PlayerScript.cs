@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -9,17 +10,18 @@ public class PlayerScript : MonoBehaviour
     public int steps = 1;
     public float moveCooldownSeconds = 0;
     public float moveCooldownRemaining = 0;
-    public float speed = 50;
+    public float speed = 100;
     private float currentSpeed = 0;
     private Vector3 targetPos;
     public static bool moving = false;
+    public float friction = 0.8f;
     private Queue<MoveDirection> moveQueue = new Queue<MoveDirection>();
 
     // Start is called before the first frame update
     void Start()
     {
         moveCooldownRemaining = moveCooldownSeconds;
-        targetPos = transform.position;
+        targetPos = transform.position;        
     }
 
     // Update is called once per frame
@@ -82,7 +84,15 @@ public class PlayerScript : MonoBehaviour
         moveTowardsTargetPosition();
     }
 
-    private void popMove()
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag.Equals("Wall"))
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
+        private void popMove()
     {
         
     }
@@ -105,7 +115,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving)
         {
-            if (currentSpeed > speed * 0.5) currentSpeed *= 0.9f;
+            if (currentSpeed > speed * 0.5) currentSpeed *=  friction;
             var step = currentSpeed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
             if (transform.position == targetPos)
