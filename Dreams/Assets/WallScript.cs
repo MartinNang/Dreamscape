@@ -6,9 +6,9 @@ using static PlayerScript;
 public class WallScript : MonoBehaviour
 {
     public MoveDirection moveDirection;
-    public float moveDistance = 4;
+    public static float moveDistance = 5;
     private bool previousMoving = false;
-    public float speed = 120;
+    public static float speed = 120;
     private Vector3 targetPos, targetRot;
     private bool moving = false;
     Rigidbody m_Rigidbody;
@@ -23,11 +23,6 @@ public class WallScript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        
-    }
-
-    private void FixedUpdate()
     {
         if (PlayerScript.moving && !previousMoving)
         {
@@ -51,6 +46,7 @@ public class WallScript : MonoBehaviour
         }
         if (moving)
         {
+            // if (currentSpeed > speed * 0.5) currentSpeed *= friction;
             var step = speed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
             // transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, speed * Time.deltaTime);

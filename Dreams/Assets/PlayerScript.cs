@@ -66,8 +66,8 @@ public class PlayerScript : MonoBehaviour
                     currentZ += (left ? -1 : 0) * stepLength + (right ? 1 : 0) * stepLength;
                                         
                 }
-                currentX = Mathf.Clamp(currentX, -8, 8);
-                currentZ = Mathf.Clamp(currentZ, -8, 8);
+                currentX = Mathf.Clamp(currentX, -7.5f, 7.5f);
+                currentZ = Mathf.Clamp(currentZ, -7.5f, 7.5f);
                 targetPos = new Vector3(currentX, transform.position.y, currentZ);
                 Debug.Log("targetPos: " + targetPos);
 
@@ -89,6 +89,10 @@ public class PlayerScript : MonoBehaviour
         if (other.gameObject.tag.Equals("Wall"))
         {
             SceneManager.LoadScene(0);
+        }
+        else if (other.gameObject.tag.Equals("Floor"))
+        {
+
         }
     }
 
@@ -115,7 +119,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (moving)
         {
-            if (currentSpeed > speed * 0.5) currentSpeed *=  friction;
+            // if (currentSpeed > speed * 0.5) currentSpeed *=  friction;
             var step = currentSpeed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
             if (transform.position == targetPos)
