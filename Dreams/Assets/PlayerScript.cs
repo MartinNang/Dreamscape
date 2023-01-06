@@ -16,21 +16,28 @@ public class PlayerScript : MonoBehaviour
     public static bool moving = false;
     public float friction = 0.8f;
     private Queue<MoveDirection> moveQueue = new Queue<MoveDirection>();
+    private bool neutral;
 
     // Start is called before the first frame update
     void Start()
     {
         moveCooldownRemaining = moveCooldownSeconds;
-        targetPos = transform.position;        
+        targetPos = transform.position;     
+        neutral = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        bool up = Input.GetKeyDown(KeyCode.W);
-        bool down = Input.GetKeyDown(KeyCode.S);
-        bool left = Input.GetKeyDown(KeyCode.A);
-        bool right = Input.GetKeyDown(KeyCode.D);
+        bool up = Input.GetAxisRaw("Vertical") > 0 && neutral;
+        if (up) Debug.Log("up");
+        bool down = Input.GetAxisRaw("Vertical") < 0 && neutral;
+        if (down) Debug.Log("down");
+        bool left = Input.GetAxisRaw("Horizontal") < 0 && neutral;
+        if (left) Debug.Log("left");
+        bool right = Input.GetAxisRaw("Horizontal") > 0 && neutral;
+        if (right) Debug.Log("right");
+        neutral = Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0;
 
         float currentX = transform.position.x;
         float currentZ = transform.position.z;

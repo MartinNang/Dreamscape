@@ -29,10 +29,10 @@ public class WallScript : MonoBehaviour
             switch(moveDirection)
             {
                 case (MoveDirection.UP):
-                    targetPos.x += moveDistance;
+                    targetPos.x -= moveDistance;
                     break;
                 case (MoveDirection.DOWN):
-                    targetPos.x -= moveDistance;
+                    targetPos.x += moveDistance;
                     break;
                 case MoveDirection.LEFT:
                     targetPos.z -= moveDistance;
@@ -40,7 +40,29 @@ public class WallScript : MonoBehaviour
                 case MoveDirection.RIGHT:
                     targetPos.z += moveDistance;
                     break;
-            }            
+            }
+
+            // if (targetPos.x < -17.5f || targetPos.x > 17.5f || targetPos.z < -17.5f || targetPos.z > 17.5f) Destroy(this.gameObject);
+            if (targetPos.x < -17.5f)
+            {
+                transform.position = new Vector3(17.5f, transform.position.y, transform.position.z);
+                targetPos = transform.position;
+            }
+            if (targetPos.x > 17.5f)
+            {
+                transform.position = new Vector3(-17.5f, transform.position.y, transform.position.z);
+                targetPos = transform.position;
+            }
+            if (targetPos.z < -17.5f)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, 17.5f);
+                targetPos = transform.position;
+            }
+            if (targetPos.z > 17.5f)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, -17.5f);
+                targetPos = transform.position;
+            }
             // targetRot.x += 30;
             moving = true;
         }
