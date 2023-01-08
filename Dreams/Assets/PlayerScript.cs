@@ -13,7 +13,7 @@ public class PlayerScript : MonoBehaviour
     public float speed = 100;
     private float currentSpeed = 0;
     private Vector3 targetPos;
-    public static bool moving = false;
+    private static bool isMoving = false;
     public float friction = 0.8f;
     private Queue<MoveDirection> moveQueue = new Queue<MoveDirection>();
     private bool neutral;
@@ -44,9 +44,9 @@ public class PlayerScript : MonoBehaviour
 
         if ((up ^ down ^ left ^ right))
         {
-            if (!moving)
+            if (!isMoving)
             {
-                moving = true;
+                setIsMoving(true);
                 // TODO: fix the queue
                 if (moveQueue.Count > 0)
                 {
@@ -91,6 +91,17 @@ public class PlayerScript : MonoBehaviour
         moveTowardsTargetPosition();
     }
 
+    private void setIsMoving(bool value)
+    {
+        isMoving = value;
+        WallScript.setIsPlayerMoving(value);
+    }
+
+    public static bool getIsMoving()
+    {
+        return isMoving;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag.Equals("Wall"))
@@ -124,14 +135,14 @@ public class PlayerScript : MonoBehaviour
 
     private void moveTowardsTargetPosition()
     {
-        if (moving)
+        if (getIsMoving())
         {
             // if (currentSpeed > speed * 0.5) currentSpeed *=  friction;
             var step = currentSpeed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
             if (transform.position == targetPos)
             {
-                moving = false;
+                setIsMoving(false);
             }
         } 
         else if (moveQueue.Count != 0)

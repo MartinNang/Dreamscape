@@ -11,6 +11,7 @@ public class WallScript : MonoBehaviour
     public static float speed = 120;
     private Vector3 targetPos, targetRot;
     private bool moving = false;
+    public static bool isPlayerMoving;
     Rigidbody m_Rigidbody;
 
     // Start is called before the first frame update
@@ -18,13 +19,14 @@ public class WallScript : MonoBehaviour
     {
         targetPos = transform.position;
         targetRot = new Vector3(720, 0, 0);
+        isPlayerMoving = true;
         // m_Rigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (PlayerScript.moving && !previousMoving)
+        if (isPlayerMoving && !previousMoving)
         {
             switch(moveDirection)
             {
@@ -78,8 +80,12 @@ public class WallScript : MonoBehaviour
             if (transform.position == targetPos) moving = false;
         }
 
-        previousMoving = PlayerScript.moving;
+        previousMoving = isPlayerMoving;      
         
-        
+    }
+
+    public static void setIsPlayerMoving(bool val)
+    {
+        isPlayerMoving = val;
     }
 }
