@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
-    public int stepLength = 5;
+    public Rigidbody rb;
+    public float stepLength = 5;
     public int steps = 1;
+    public int rows = 4;
+    public int columns = 4;
     public float moveCooldownSeconds = 0;
     public float moveCooldownRemaining = 0;
     public float speed = 100;
@@ -17,6 +20,7 @@ public class PlayerScript : MonoBehaviour
     public float friction = 0.8f;
     private Queue<MoveDirection> moveQueue = new Queue<MoveDirection>();
     private bool neutral;
+    private bool isFalling = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,14 +41,14 @@ public class PlayerScript : MonoBehaviour
         if (left) Debug.Log("left");
         bool right = Input.GetAxisRaw("Horizontal") > 0 && neutral;
         if (right) Debug.Log("right");
-        neutral = Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0;
+        neutral = Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0; // bezieht sich auf letzte frame
 
         float currentX = transform.position.x;
         float currentZ = transform.position.z;
 
         if ((up ^ down ^ left ^ right))
         {
-            if (!isMoving)
+            if (!isMoving && !isFalling) // TODO fix falling
             {
                 setIsMoving(true);
                 // TODO: fix the queue
@@ -54,18 +58,18 @@ public class PlayerScript : MonoBehaviour
                     switch (currentMove)
                     {
                         case MoveDirection.UP:
-                            currentX += (up ? -1 : 0) * stepLength;
+                            currentZ += (up ? -1 : 0) * stepLength;
                             break;
                         case MoveDirection.DOWN:
-                            currentX += (down ? 1 : 0) * stepLength;
+                            currentZ += (down ? 1 : 0) * stepLength;
                             break;
                         case MoveDirection.LEFT:
-                            currentZ += (left ? -1 : 0) * stepLength;
+                            currentX += (left ? -1 : 0) * stepLength;
                             break;
                         case MoveDirection.RIGHT:
-                            currentZ += (right ? 1 : 0) * stepLength;
+                            currentX += (right ? 1 : 0) * stepLength;
                             break;
-                    }                    
+                    }
                 } 
                 else
                 {
@@ -73,8 +77,8 @@ public class PlayerScript : MonoBehaviour
                     currentZ += (left ? -1 : 0) * stepLength + (right ? 1 : 0) * stepLength;
                                         
                 }
-                currentX = Mathf.Clamp(currentX, -7.5f, 7.5f);
-                currentZ = Mathf.Clamp(currentZ, -7.5f, 7.5f);
+                currentX = Mathf.Clamp(currentX, -((rows - 1) * stepLength / 2), (rows-1) * stepLength /2);
+                currentZ = Mathf.Clamp(currentZ, -((rows - 1) * stepLength / 2), (rows-1) * stepLength / 2);
                 targetPos = new Vector3(currentX, transform.position.y, currentZ);
                 Debug.Log("targetPos: " + targetPos);
 
@@ -88,7 +92,23 @@ public class PlayerScript : MonoBehaviour
         }
         Debug.Log("current speed: " + currentSpeed);
         // if (moveCooldownRemaining > 0) moveCooldownRemaining -= Time.deltaTime;
-        moveTowardsTargetPosition();
+        moveTowardsTargetPosition();       
+
+    }
+
+    private void FixedUpdate()
+    {
+        // Vector3 dir = targetPos - transform.position;
+        // rb.AddForce(0,0,0);
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag.Equals("Level"))
+        {
+            isFalling = true;
+        }
     }
 
     private void setIsMoving(bool value)
@@ -108,9 +128,9 @@ public class PlayerScript : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
-        else if (other.gameObject.tag.Equals("Floor"))
+        else if (other.gameObject.tag.Equals("Level"))
         {
-
+            isFalling = false;
         }
     }
 
