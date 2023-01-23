@@ -19,7 +19,7 @@ public class WallScript : MonoBehaviour
     {
         targetPos = transform.position;
         targetRot = new Vector3(720, 0, 0);
-        isPlayerMoving = true;
+        isPlayerMoving = false;
         // m_Rigidbody = GetComponent<Rigidbody>();
     }
 
